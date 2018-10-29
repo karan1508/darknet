@@ -311,7 +311,7 @@ int compare_by_probs(const void *a_ptr, const void *b_ptr) {
     return delta < 0 ? -1 : delta > 0 ? 1 : 0;
 }
 
-void draw_detections_v3(image im, detection *dets, int num, float thresh, char **names, image **alphabet, int classes, int ext_output)
+void draw_detections_v3(image im, detection *dets, int num, float thresh, char **names, image **alphabet, int classes, int ext_output, int *classes_to_label)
 {
     int selected_detections_num;
     detection_with_class* selected_detections = get_actual_detections(dets, num, thresh, &selected_detections_num);
@@ -388,7 +388,17 @@ void draw_detections_v3(image im, detection *dets, int num, float thresh, char *
             else {
                 draw_box_width(im, left, top, right, bot, width, red, green, blue); // 3 channels RGB
             }
-            if (alphabet) {
+
+            int draw_label_flag = 0;
+            int index = 0;
+            while(classes_to_label[index] != -1) {
+                if(selected_detections[i].best_class == classes_to_label[index]) {
+                    draw_label_flag = 1;
+                }
+                index++;
+            }
+
+            if (alphabet && draw_label_flag) {
                 char labelstr[4096] = { 0 };
                 strcat(labelstr, names[selected_detections[i].best_class]);
                 int j;
@@ -468,10 +478,10 @@ void draw_detections(image im, int num, float thresh, box *boxes, float **probs,
 
             printf("\n");
             draw_box_width(im, left, top, right, bot, width, red, green, blue);
-            if (alphabet) {
-                image label = get_label(alphabet, names[class_id], (im.h*.03)/10);
-                draw_label(im, top + width, left, label, rgb);
-            }
+            /* if (alphabet) { */
+            /*     image label = get_label(alphabet, names[class_id], (im.h*.03)/10); */
+            /*     draw_label(im, top + width, left, label, rgb); */
+            /* } */
         }
     }
 }
