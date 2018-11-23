@@ -41,6 +41,7 @@ int read_all_fail(int fd, char *buffer, size_t bytes);
 int write_all_fail(int fd, char *buffer, size_t bytes);
 void find_replace(char *str, char *orig, char *rep, char *output);
 void replace_image_to_label(char *input_path, char *output_path);
+void replace_image_to_pred(char *input_path, char *output_path);
 void error(const char *s);
 void malloc_error();
 void file_error(char *s);

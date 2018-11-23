@@ -1106,29 +1106,25 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
     list *options = read_data_cfg(datacfg);
     char *name_list = option_find_str(options, "names", "data/names.list");
     char *draw_labels = option_find_str(options, "classes_to_label", "");
-    printf("Draw labels : %s", draw_labels);
     int classes_to_label[10];
-    // if (0 == strlen(pt)) {
-    //     classes_to_label[0] = -1;
-    // } else {
-    //      char *pt = strtok (draw_labels,",");
-    //     int index = 0;
-    //     while (pt != NULL) {
-    //         classes_to_label[index++] = atoi(index);
-    //         printf('Classes to label : %d', classes_to_label[index-1]);
-    //         pt = strtok(NULL, ",");
-    //     }
-    //     classes_to_label[index] = -1;
-    // }
-
-    classes_to_label[0] = 0;
-    classes_to_label[1] = 3;
-    classes_to_label[2] = 4;
-    classes_to_label[3] = 5;
-    classes_to_label[4] = 6;
-    classes_to_label[5] = 7;
-    classes_to_label[6] = 8;
-    classes_to_label[7] = -1;
+    if (0 == strlen(draw_labels))
+    {
+        classes_to_label[0] = -1;
+        printf("All classes will be labeled\n");
+    }
+    else
+    {
+        printf("Only following classes will be printed\n");
+        char *pt = strtok(draw_labels, ",");
+        int index = 0;
+        while (pt != NULL)
+        {
+            classes_to_label[index++] = atoi(pt);
+            printf("Classes to label : %d\n", classes_to_label[index - 1]);
+            pt = strtok(NULL, ",");
+        }
+        classes_to_label[index] = -1;
+    }
 
     int names_size = 0;
     char **names = get_labels_custom(name_list, &names_size); //get_labels(name_list);
@@ -1189,12 +1185,9 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         draw_detections_v3(im, dets, nboxes, thresh, names, alphabet, l.classes, ext_output, classes_to_label);
 
         // Fix the output name
-        char out_name[2048];
+        char out_name[4096];
         memset(out_name, 0, 2048);
-        find_replace(input, ".jpg", "", out_name);
-        find_replace(out_name, ".png", "", out_name);
-        find_replace(out_name, ".jpeg", "", out_name);
-        sprintf(out_name, "%s_pred", out_name);
+        replace_image_to_pred(input, out_name);
         printf("Saving preds in %s", out_name);
         save_image(im, out_name);
         if (!dont_show) {

@@ -221,6 +221,13 @@ void find_replace_extension(char *str, char *orig, char *rep, char *output)
     sprintf(output, "%s%s%s", buffer, rep, p + strlen(orig));
     free(buffer);
 }
+void replace_image_to_pred(char *input_path, char *output_path)
+{
+    find_replace(input_path, ".jpg", "", output_path);
+    find_replace(output_path, ".png", "", output_path);
+    find_replace(output_path, ".jpeg", "", output_path);
+    sprintf(output_path, "%s_pred", output_path);
+}
 
 void replace_image_to_label(char *input_path, char *output_path)
 {
